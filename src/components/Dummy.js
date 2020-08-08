@@ -37,7 +37,7 @@ function Dummy({name, email, pno, avatarURL, id, onSave, onDelete}) {
     return (
         
         <tr>
-            <td><Avatar alt="Remy Sharp" src={"http://localhost:5000/"+avatarURL.replace("uploads","")} /></td>
+            <td><Avatar alt="Remy Sharp" src={avatarURL} /></td>
             <td>
                 {edit ? (<TextField
                         onChange={(e)=>{setEditName(e.target.value)}} 

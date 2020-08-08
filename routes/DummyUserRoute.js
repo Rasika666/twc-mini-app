@@ -1,17 +1,35 @@
+const CLOUDARY_CONFIG  = require('../config/config').CLOUDARY_CONFIG;
+
 const express = require("express");
 const auth = require("../middleware/auth");
 
 //multer setups
 const multer = require("multer");
 
-const storage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    callback(null, "./uploads/");
-  },
-  filename: (req, file, callback) => {
-    callback(null, file.originalname);
-  },
-});
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
+
+//  code for local set up
+// **************************************************
+// const storage = multer.diskStorage({
+//   destination: (req, file, callback) => {
+//     callback(null, "./uploads/");
+//   },
+//   filename: (req, file, callback) => {
+//     callback(null, file.originalname);
+//   },
+// });
+// ***************************************************
+
+cloudinary.config(CLOUDARY_CONFIG);
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  folder: "twc",
+  allowedFormats: ["jpg", "png"],
+  transformation: [{ width: 500, height: 500, crop: "limit" }]
+  });
 
 const upload = multer({
   storage: storage,
@@ -23,8 +41,9 @@ function routes(DummyUser) {
   // @route       POST api/v1/dummyuser
   // @decs        create new dummy user
   // @access      private
-  dummyRoute.route("/dummyuser").post(upload.single("avatar"),auth, (req, res) => {
-    console.log("call dummyuser(POST)");
+  dummyRoute.route("/dummyuser").post(auth, upload.single("avatar"), (req, res) => {
+    console.log("call dummyuser(POST)", req.file);
+    
     const dummyuser = new DummyUser({
       name: req.body.name,
       email: req.body.email,

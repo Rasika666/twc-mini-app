@@ -34,7 +34,7 @@ const db = mongoose
   });
 
 //static files
-app.use(express.static("uploads"));
+// app.use(express.static("uploads"));
 
 //body-parser config
 app.use(bodyParser.urlencoded({ extended: true }));
